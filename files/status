@@ -1,21 +1,21 @@
 [
   {
     "name": "ANOMALY-001",
-    "classification": "Euclid",
+    "classification": "Medium Danger",
     "status": "OPEN",
     "location": "Forest Sector 7",
     "file": "files/anomaly001.html"
   },
   {
     "name": "ANOMALY-002",
-    "classification": "Keter",
+    "classification": "Moderate Danger",
     "status": "REDACTED",
     "location": "██████████",
     "file": "████"
   },
   {
     "name": "ANOMALY-003",
-    "classification": "Euclid",
+    "classification": "██████",
     "status": "REDACTED",
     "location": "██████████",
     "file": "████"
