@@ -1,0 +1,30 @@
+[
+  {
+    "name": "ANOMALY-001",
+    "classification": "Euclid",
+    "status": "OPEN",
+    "location": "Forest Sector 7",
+    "file": "files/anomaly001.html"
+  },
+  {
+    "name": "ANOMALY-002",
+    "classification": "Keter",
+    "status": "REDACTED",
+    "location": "██████████",
+    "file": "████"
+  },
+  {
+    "name": "ANOMALY-003",
+    "classification": "Euclid",
+    "status": "REDACTED",
+    "location": "██████████",
+    "file": "████"
+  },
+  {
+    "name": "ANOMALY-004",
+    "classification": "Euclid",
+    "status": "REDACTED",
+    "location": "██████████",
+    "file": "████"
+  }
+]
