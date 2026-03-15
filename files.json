@@ -1,0 +1,16 @@
+[
+  {
+    "name": "ANOMALY-001",
+    "file": "files/anomaly001.html",
+    "classification": "Euclid",
+    "status": "Under Observation",
+    "location": "Forest Region"
+  },
+  {
+    "name": "ANOMALY-002",
+    "file": "files/anomaly002.html",
+    "classification": "████",
+    "status": "████",
+    "location": "████████"
+  }
+]
