@@ -1,1 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AC ANOMALY DATABASE – ANOMALY-001</title>
+<style>
+body{
+  background:#050505;
+  color:#e6e6e6;
+  font-family:Courier New, monospace;
+  margin:40px;
+  overflow-x:hidden;
+}
+.container{
+  max-width:1000px;
+  margin:auto;
+  background:#111;
+  padding:40px;
+  border:2px solid #333;
+  border-radius:5px;
+}
+h1{
+  color:#ff2a2a;
+  border-bottom:2px solid #444;
+  padding-bottom:10px;
+}
+.section{
+  margin-top:30px;
+}
+.warning{
+  background:#1a0000;
+  border:1px solid #ff2a2a;
+  padding:15px;
+  margin-top:20px;
+}
+.log{
+  background:#0f0f0f;
+  border:1px solid #444;
+  padding:15px;
+  margin-top:10px;
+}
+a{
+  color:#ffb347;
+  text-decoration:none;
+}
+a:hover{
+  text-decoration:underline;
+}
+.redacted{
+  background:black;
+  color:black;
+  padding:3px 8px;
+}
+.glitch{
+  display:inline-block;
+  font-weight:bold;
+  color:#e6e6e6; /* keep glitch text plain */
+  white-space: pre; /* prevent line breaking during glitch */
+}
 
+/* glitch animations */
+.shake{
+  animation: shake 0.08s infinite;
+}
+@keyframes shake{
+  0%{transform:translate(0,0)}
+  25%{transform:translate(1px,-1px)}
+  50%{transform:translate(-2px,1px)}
+  75%{transform:translate(2px,0)}
+  100%{transform:translate(0,0)}
+}
+.lag{
+  animation: lag 0.25s infinite;
+}
+@keyframes lag{
+  0%{transform:translate(0,0)}
+  50%{transform:translate(-3px,2px)}
+  100%{transform:translate(0,0)}
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+<h1>ANOMALY-001</h1>
+
+<p>Classification: Euclid<br>
+Psychological Hazard Level: Mild Trauma<br>
+Clearance Required: Level <span class="redacted">████</span></p>
+
+<div class="warning">
+WARNING: Interaction with ANOMALY-001 may cause language distortion,
+temporary memory disruption, and psychological stress.
+</div>
+
+<div class="section">
+<b>Description</b>
+<p>
+ANOMALY-001 is a large humanoid entity approximately 3–4 meters in height.
+Biological structure remains <span class="redacted">████████████</span>.
+</p>
+
+<p>
+Animals appear friendly toward the entity and do not show fear responses.
+When humans approach, the entity repeats:
+</p>
+
+<p class="glitch">Hide. Do not stay.</p>
+</div>
+
+<div class="section">
+<b>The Trial Event</b>
+<p>
+If a human ignores the warning, ANOMALY-001 initiates an event
+called <span class="glitch">THE TRIAL</span>.
+</p>
+
+<p>Survival probability: <b>92.91%</b></p>
+
+<p>
+Subjects report extreme pain lasting less than one second.
+Failure results in transformation into
+<span class="redacted">████████████</span>.
+</p>
+
+<p class="glitch">some subjects return different</p>
+</div>
+
+<div class="section">
+<b>Incident Log – 2021-03-17</b>
+<div class="log">
+Exploration teams discovered a forest settlement connected
+to ANOMALY-001.<br>
+Bodies recovered: <span class="redacted">████</span><br>
+Population estimate: <span class="redacted">100k</span>
+
+<p class="glitch">THE CITY WAS NOT EMPTY</p>
+</div>
+</div>
+
+<br>
+<a href="../index.html">RETURN TO DATABASE</a>
+
+</div>
+
+<script>
+const glitchTexts = document.querySelectorAll(".glitch");
+const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+function randomChar(){ 
+  return chars[Math.floor(Math.random()*chars.length)]; 
+}
+
+function scramble(text){
+  let result="";
+  for(let i=0;i<text.length;i++){
+    if(text[i]===" "){ result+=" "; continue; }
+    if(Math.random()<0.45){ result += randomChar(); } 
+    else { result += text[i]; }
+  }
+  return result;
+}
+
+function glitch(){
+  glitchTexts.forEach(el=>{
+    if(Math.random()<0.6){ el.classList.add("shake"); } 
+    else { el.classList.remove("shake"); }
+    if(Math.random()<0.35){ el.classList.add("lag"); } 
+    else { el.classList.remove("lag"); }
+    if(Math.random()<0.75){ el.innerText = scramble(el.dataset.original); } 
+    else { el.innerText = el.dataset.original; }
+  });
+}
+
+document.querySelectorAll(".glitch").forEach(el=>{
+  el.dataset.original = el.innerText;
+});
+
+setInterval(glitch,120);
+</script>
+</body>
+</html>
