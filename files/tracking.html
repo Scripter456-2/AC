@@ -9,141 +9,110 @@ body{
   background:#050505;
   color:#e6e6e6;
   font-family:Courier New, monospace;
-  margin:0;
+  margin:20px;
 }
 
-h1{
-  color:#ff2a2a;
+h1{ color:#ff2a2a; }
+
+.container{
+  max-width:1000px;
+  margin:auto;
+  background:#111;
+  padding:20px;
+  border:2px solid #333;
+}
+
+/* bases */
+.base{
+  background:#0f0f0f;
+  border:1px solid #444;
   padding:10px;
+  margin:10px 0;
 }
 
-/* FIXED MAP */
-#map{
-  position:relative;
-  width:100%;
-  height:90vh;
-  background:url("https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/World_map_-_low_resolution.svg/1920px-World_map_-_low_resolution.svg.png");
-  background-size:cover;
-  background-position:center;
-}
-
-/* dots */
-.dot{
-  position:absolute;
-  width:10px;
-  height:10px;
-  border-radius:50%;
-}
-
-.red{ background:red; }
-.blue{ background:cyan; }
-
-.label{
-  position:absolute;
-  font-size:10px;
-  transform:translate(12px,-5px);
-}
-
-/* alert */
-#alert{
-  position:fixed;
-  bottom:10px;
-  left:10px;
-  background:#1a0000;
-  border:1px solid red;
+/* log */
+#log{
+  margin-top:20px;
+  background:#000;
+  border:1px solid #333;
   padding:10px;
-  display:none;
+  height:300px;
+  overflow-y:auto;
+  font-size:13px;
 }
+
+.entry{
+  margin-bottom:5px;
+}
+
+.red{ color:#ff2a2a; }
+.blue{ color:#00ffff; }
+.yellow{ color:#ffcc00; }
+
 </style>
 </head>
 
 <body>
 
-<h1>GLOBAL ANOMALY TRACKING</h1>
-<div id="map"></div>
-<div id="alert"></div>
+<div class="container">
+
+<h1>GLOBAL CONTROL FEED</h1>
+
+<h2>BASES</h2>
+<div id="bases"></div>
+
+<h2>ANNOUNCEMENTS</h2>
+<div id="log"></div>
+
+</div>
 
 <script>
-const map = document.getElementById("map");
-const alertBox = document.getElementById("alert");
-
-let anomalies = JSON.parse(localStorage.getItem("anomalies")) || [
-  {name:"ANOMALY-001", x:50, y:50, type:"red"},
-  {name:"ALPHA-91", x:60, y:40, type:"blue", count:5}
+let bases = JSON.parse(localStorage.getItem("bases")) || [
+  {name:"SITE-01", status:"STABLE"},
+  {name:"SITE-02", status:"STABLE"}
 ];
 
-/* render */
-function render(){
-  map.innerHTML = "";
+let log = JSON.parse(localStorage.getItem("log")) || [];
 
-  anomalies.forEach(a=>{
-    let dot = document.createElement("div");
-    dot.className = "dot " + a.type;
-    dot.style.left = a.x + "%";
-    dot.style.top = a.y + "%";
+/* render bases */
+function renderBases(){
+  let el = document.getElementById("bases");
+  el.innerHTML = "";
 
-    let label = document.createElement("div");
-    label.className = "label";
-    label.innerText = a.name + (a.count ? " ("+a.count+")" : "");
-
-    dot.appendChild(label);
-    map.appendChild(dot);
+  bases.forEach(b=>{
+    let div = document.createElement("div");
+    div.className = "base";
+    div.innerHTML = `<b>${b.name}</b><br>Status: ${b.status}`;
+    el.appendChild(div);
   });
 }
 
-/* combat system */
-function simulate(){
-  let anomaly = anomalies.find(a=>a.type==="red");
-  let alpha = anomalies.find(a=>a.type==="blue");
+/* render log */
+function renderLog(){
+  let el = document.getElementById("log");
+  el.innerHTML = "";
 
-  if(anomaly && alpha){
-    let dx = anomaly.x - alpha.x;
-    let dy = anomaly.y - alpha.y;
-    let dist = Math.sqrt(dx*dx + dy*dy);
+  log.slice(-50).forEach(entry=>{
+    let div = document.createElement("div");
+    div.className = "entry";
+    div.innerHTML = entry;
+    el.appendChild(div);
+  });
 
-    if(dist < 5 && alpha.count > 0){
-      let loss = Math.floor(Math.random()*2); // 0 or 1 dies
-      alpha.count -= loss;
-
-      if(loss > 0){
-        showAlert("⚠ ALPHA-91 LOST UNIT");
-      }
-
-      if(alpha.count <= 0){
-        showAlert("☠ ALL ALPHA-91 UNITS LOST");
-        alpha.count = 0;
-      }
-    }
-  }
-
-  localStorage.setItem("anomalies", JSON.stringify(anomalies));
-  render();
-}
-
-/* alert */
-function showAlert(msg){
-  alertBox.style.display = "block";
-  alertBox.innerText = msg;
-  setTimeout(()=>alertBox.style.display="none",3000);
+  el.scrollTop = el.scrollHeight;
 }
 
 /* listen updates */
 window.addEventListener("storage", ()=>{
-  anomalies = JSON.parse(localStorage.getItem("anomalies")) || anomalies;
-  let msg = localStorage.getItem("message");
+  bases = JSON.parse(localStorage.getItem("bases")) || bases;
+  log = JSON.parse(localStorage.getItem("log")) || log;
 
-  render();
-
-  if(msg){
-    showAlert(msg);
-    localStorage.removeItem("message");
-  }
+  renderBases();
+  renderLog();
 });
 
-/* loop */
-setInterval(simulate, 2000);
-
-render();
+renderBases();
+renderLog();
 </script>
 
 </body>
