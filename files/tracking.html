@@ -17,12 +17,14 @@ h1{
   padding:10px;
 }
 
+/* FIXED MAP */
 #map{
   position:relative;
   width:100%;
   height:90vh;
-  background:url("https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg");
+  background:url("https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/World_map_-_low_resolution.svg/1920px-World_map_-_low_resolution.svg.png");
   background-size:cover;
+  background-position:center;
 }
 
 /* dots */
@@ -38,12 +40,11 @@ h1{
 
 .label{
   position:absolute;
-  color:white;
   font-size:10px;
   transform:translate(12px,-5px);
 }
 
-/* alert box */
+/* alert */
 #alert{
   position:fixed;
   bottom:10px;
@@ -59,22 +60,19 @@ h1{
 <body>
 
 <h1>GLOBAL ANOMALY TRACKING</h1>
-
 <div id="map"></div>
-
 <div id="alert"></div>
 
 <script>
 const map = document.getElementById("map");
 const alertBox = document.getElementById("alert");
 
-/* default anomalies */
 let anomalies = JSON.parse(localStorage.getItem("anomalies")) || [
   {name:"ANOMALY-001", x:50, y:50, type:"red"},
-  {name:"ALPHA-91", x:60, y:40, type:"blue"}
+  {name:"ALPHA-91", x:60, y:40, type:"blue", count:5}
 ];
 
-/* render dots */
+/* render */
 function render(){
   map.innerHTML = "";
 
@@ -86,21 +84,50 @@ function render(){
 
     let label = document.createElement("div");
     label.className = "label";
-    label.innerText = a.name;
+    label.innerText = a.name + (a.count ? " ("+a.count+")" : "");
 
     dot.appendChild(label);
     map.appendChild(dot);
   });
 }
 
-/* alerts */
+/* combat system */
+function simulate(){
+  let anomaly = anomalies.find(a=>a.type==="red");
+  let alpha = anomalies.find(a=>a.type==="blue");
+
+  if(anomaly && alpha){
+    let dx = anomaly.x - alpha.x;
+    let dy = anomaly.y - alpha.y;
+    let dist = Math.sqrt(dx*dx + dy*dy);
+
+    if(dist < 5 && alpha.count > 0){
+      let loss = Math.floor(Math.random()*2); // 0 or 1 dies
+      alpha.count -= loss;
+
+      if(loss > 0){
+        showAlert("⚠ ALPHA-91 LOST UNIT");
+      }
+
+      if(alpha.count <= 0){
+        showAlert("☠ ALL ALPHA-91 UNITS LOST");
+        alpha.count = 0;
+      }
+    }
+  }
+
+  localStorage.setItem("anomalies", JSON.stringify(anomalies));
+  render();
+}
+
+/* alert */
 function showAlert(msg){
   alertBox.style.display = "block";
   alertBox.innerText = msg;
-  setTimeout(()=>alertBox.style.display="none",4000);
+  setTimeout(()=>alertBox.style.display="none",3000);
 }
 
-/* listen for control updates */
+/* listen updates */
 window.addEventListener("storage", ()=>{
   anomalies = JSON.parse(localStorage.getItem("anomalies")) || anomalies;
   let msg = localStorage.getItem("message");
@@ -112,6 +139,9 @@ window.addEventListener("storage", ()=>{
     localStorage.removeItem("message");
   }
 });
+
+/* loop */
+setInterval(simulate, 2000);
 
 render();
 </script>
