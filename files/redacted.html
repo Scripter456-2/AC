@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ACCESS RESTRICTED</title>
+
+<style>
+body{
+  background:#050505;
+  color:#e6e6e6;
+  font-family:Courier New, monospace;
+  margin:40px;
+}
+
+.container{
+  max-width:900px;
+  margin:auto;
+  background:#111;
+  padding:40px;
+  border:2px solid #333;
+}
+
+h1{
+  color:#ff2a2a;
+  border-bottom:2px solid #444;
+  padding-bottom:10px;
+}
+
+.warning{
+  background:#1a0000;
+  border:1px solid #ff2a2a;
+  padding:15px;
+  margin-top:20px;
+}
+
+.redacted{
+  background:black;
+  color:black;
+  padding:3px 8px;
+}
+
+.glitch{
+  display:inline-block;
+  animation: glitch 0.08s infinite;
+}
+
+@keyframes glitch{
+  0%{transform:translate(0,0);}
+  25%{transform:translate(-2px,1px);}
+  50%{transform:translate(2px,-1px);}
+  75%{transform:translate(-1px,2px);}
+  100%{transform:translate(0,0);}
+}
+
+a{
+  color:#ffb347;
+  text-decoration:none;
+}
+
+a:hover{
+  text-decoration:underline;
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<h1>ACCESS DENIED</h1>
+
+<div class="warning">
+WARNING: You do not have sufficient clearance to access this file.
+</div>
+
+<p>
+This document has been classified under Level <span class="redacted">████</span> clearance.
+Unauthorized access attempts have been logged.
+</p>
+
+<p class="glitch">
+YOU SHOULD NOT BE HERE
+</p>
+
+<p>
+Return immediately to authorized sections of the database.
+Further attempts may result in <span class="redacted">████████████</span>.
+</p>
+
+<br>
+<a href="index.html">RETURN TO DATABASE</a>
+
+</div>
+
+</body>
+</html>
