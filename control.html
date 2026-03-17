@@ -51,6 +51,7 @@ button{ cursor:pointer; }
   <option>STABLE</option>
   <option>UNDER ATTACK</option>
   <option>BREACHED</option>
+  <option>UNSTABLE</option>
 </select>
 <button onclick="updateBase()">Update</button>
 
@@ -63,6 +64,11 @@ button{ cursor:pointer; }
   <option>Complete Destruction</option>
 </select>
 <button onclick="breach()">Trigger</button>
+
+<h2>Reactor Control</h2>
+<input id="reactorSite" placeholder="SITE-01">
+<button onclick="reactorStart()">Start Instability</button>
+<button onclick="reactorExplode()">FORCE MELTDOWN</button>
 
 <h2>Deploy Units</h2>
 <select id="deployType">
@@ -88,26 +94,33 @@ function saveLog(log){
   localStorage.setItem("log", JSON.stringify(log));
 }
 
-/* add base */
+function getBases(){
+  return JSON.parse(localStorage.getItem("bases")) || [];
+}
+
+function saveBases(bases){
+  localStorage.setItem("bases", JSON.stringify(bases));
+}
+
+/* BASES */
 function addBase(){
   let name = document.getElementById("baseName").value;
 
-  let bases = JSON.parse(localStorage.getItem("bases")) || [];
+  let bases = getBases();
   bases.push({name, status:"STABLE"});
 
-  localStorage.setItem("bases", JSON.stringify(bases));
+  saveBases(bases);
 
   let log = getLog();
   log.push("🟢 Base created: " + name);
   saveLog(log);
 }
 
-/* update base */
 function updateBase(){
   let name = document.getElementById("baseTarget").value;
   let status = document.getElementById("status").value;
 
-  let bases = JSON.parse(localStorage.getItem("bases")) || [];
+  let bases = getBases();
 
   bases.forEach(b=>{
     if(b.name === name){
@@ -115,51 +128,115 @@ function updateBase(){
     }
   });
 
-  localStorage.setItem("bases", JSON.stringify(bases));
+  saveBases(bases);
 
   let log = getLog();
   log.push("🟡 " + name + " status updated to " + status);
   saveLog(log);
 }
 
-/* breach */
+/* BREACH */
 function breach(){
   let level = document.getElementById("breachLevel").value;
 
   let log = getLog();
   log.push("🔴 CONTAINMENT BREACH: " + level);
+
+  // automatic escalation message
+  if(level === "Severe Danger" || level === "Complete Destruction"){
+    log.push("⚠ EMERGENCY PROTOCOLS ACTIVATED");
+  }
+
   saveLog(log);
 }
 
-/* deploy */
+/* REACTOR SYSTEM */
+function reactorStart(){
+  let site = document.getElementById("reactorSite").value;
+
+  let log = getLog();
+  log.push("☢ Reactor instability detected at " + site);
+  log.push("⚠ Reactor core temperature rising");
+
+  saveLog(log);
+
+  // delayed escalation
+  setTimeout(()=>{
+    let log = getLog();
+    log.push("⚠ Reactor critical state at " + site);
+    saveLog(log);
+  }, 4000);
+}
+
+/* FULL MELTDOWN */
+function reactorExplode(){
+  let site = document.getElementById("reactorSite").value;
+
+  let bases = getBases();
+
+  bases.forEach(b=>{
+    if(b.name === site){
+      b.status = "UNSTABLE";
+    }
+  });
+
+  saveBases(bases);
+
+  let log = getLog();
+  log.push("☢☢☢ REACTOR MELTDOWN at " + site);
+  log.push("💥 BASE STATUS SET TO UNSTABLE");
+  log.push("⚠ EVACUATION FAILURE");
+  log.push("☠ MULTIPLE LOSSES DETECTED");
+
+  saveLog(log);
+}
+
+/* DEPLOY */
 function deploy(){
   let type = document.getElementById("deployType").value;
   let site = document.getElementById("deploySite").value;
 
   let log = getLog();
+
   log.push("🚁 " + type + " deployed to " + site);
 
-  /* random loss */
   if(type === "Alpha-91"){
     if(Math.random() < 0.5){
       log.push("☠ Alpha-91 units lost during operation");
     } else {
-      log.push("🔵 Alpha-91 successfully stabilizing anomaly");
+      log.push("🔵 Alpha-91 stabilizing anomaly at " + site);
     }
   }
 
   if(type === "Reactor Team"){
-    log.push("☢ Reactor stabilization in progress at " + site);
+    log.push("☢ Reactor stabilization attempt at " + site);
+
+    // chance to fix
+    if(Math.random() < 0.4){
+      let bases = getBases();
+      bases.forEach(b=>{
+        if(b.name === site){
+          b.status = "STABLE";
+        }
+      });
+      saveBases(bases);
+
+      log.push("✅ Reactor stabilized successfully");
+    } else {
+      log.push("⚠ Reactor stabilization FAILED");
+    }
   }
 
   saveLog(log);
 }
 
-/* custom msg */
+/* CUSTOM MESSAGE */
 function sendMsg(){
   let msg = document.getElementById("msg").value;
+
   let log = getLog();
   log.push("📢 " + msg);
+
   saveLog(log);
 }
 </script>
