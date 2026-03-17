@@ -9,11 +9,11 @@ body{
   background:#050505;
   color:#e6e6e6;
   font-family:Courier New, monospace;
-  margin:40px;
+  margin:20px;
 }
 
 .container{
-  max-width:800px;
+  max-width:900px;
   margin:auto;
   background:#111;
   padding:30px;
@@ -22,23 +22,30 @@ body{
 
 h1{ color:#ff2a2a; }
 
-input, select, button{
+#map{
+  width:100%;
+  height:300px;
+  background:url("https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/World_map_-_low_resolution.svg/1920px-World_map_-_low_resolution.svg.png");
+  background-size:cover;
+  margin-bottom:20px;
+  cursor:pointer;
+  position:relative;
+}
+
+.marker{
+  position:absolute;
+  width:10px;
+  height:10px;
+  background:yellow;
+  border-radius:50%;
+}
+
+button, input{
   margin:5px;
   padding:5px;
   background:#000;
   color:#fff;
   border:1px solid #444;
-}
-
-button{
-  cursor:pointer;
-}
-
-.warning{
-  background:#1a0000;
-  border:1px solid red;
-  padding:10px;
-  margin-top:20px;
 }
 </style>
 </head>
@@ -49,71 +56,74 @@ button{
 
 <h1>CONTROL PANEL</h1>
 
-<h2>Move / Add Entity</h2>
+<h2>Select Location</h2>
+<div id="map"></div>
+<p>X: <span id="x">0</span> | Y: <span id="y">0</span></p>
 
-<input id="name" placeholder="Name (ANOMALY-001)">
-<input id="x" placeholder="X (0-100)">
-<input id="y" placeholder="Y (0-100)">
+<h2>Deploy Alpha Units</h2>
+<input id="count" placeholder="Unit count">
+<button onclick="deploy()">Send Alpha-91</button>
 
-<select id="type">
-  <option value="red">Anomaly (Red)</option>
-  <option value="blue">Alpha-91 (Blue)</option>
-</select>
-
-<button onclick="add()">Add / Update</button>
-
-<h2>Send Message</h2>
-<input id="msg" placeholder="Message">
-<button onclick="sendMsg()">Send</button>
+<h2>Move Anomaly</h2>
+<button onclick="moveAnomaly()">Move ANOMALY-001</button>
 
 <h2>Events</h2>
-
-<button onclick="eventMsg('⚠ CONTAINMENT BREACH DETECTED')">Containment Breach</button>
-<button onclick="eventMsg('☢ REACTOR MELTDOWN INITIATED')">Reactor Meltdown</button>
-<button onclick="eventMsg('🚁 FORCES DEPLOYED')">Send Forces</button>
-
-<div class="warning">
-WARNING: Actions affect live tracking system.
-</div>
+<button onclick="eventMsg('⚠ CONTAINMENT BREACH')">Containment Breach</button>
+<button onclick="eventMsg('☢ REACTOR MELTDOWN')">Reactor Meltdown</button>
 
 </div>
 
 <script>
-let anomalies = JSON.parse(localStorage.getItem("anomalies")) || [];
+let x=50, y=50;
+const map = document.getElementById("map");
 
-function save(){
-  localStorage.setItem("anomalies", JSON.stringify(anomalies));
-}
+/* click map */
+map.addEventListener("click", e=>{
+  let rect = map.getBoundingClientRect();
+  x = ((e.clientX - rect.left) / rect.width) * 100;
+  y = ((e.clientY - rect.top) / rect.height) * 100;
 
-/* add or update */
-function add(){
-  let name = document.getElementById("name").value;
-  let x = parseFloat(document.getElementById("x").value);
-  let y = parseFloat(document.getElementById("y").value);
-  let type = document.getElementById("type").value;
+  document.getElementById("x").innerText = x.toFixed(1);
+  document.getElementById("y").innerText = y.toFixed(1);
 
-  let existing = anomalies.find(a=>a.name===name);
+  map.innerHTML = `<div class="marker" style="left:${x}%;top:${y}%"></div>`;
+});
+
+/* deploy alpha */
+function deploy(){
+  let count = parseInt(document.getElementById("count").value) || 5;
+
+  let anomalies = JSON.parse(localStorage.getItem("anomalies")) || [];
+
+  let existing = anomalies.find(a=>a.type==="blue");
 
   if(existing){
     existing.x = x;
     existing.y = y;
-    existing.type = type;
+    existing.count = count;
   } else {
-    anomalies.push({name,x,y,type});
+    anomalies.push({name:"ALPHA-91", x, y, type:"blue", count});
   }
 
-  save();
+  localStorage.setItem("anomalies", JSON.stringify(anomalies));
 }
 
-/* message */
-function sendMsg(){
-  let msg = document.getElementById("msg").value;
+/* move anomaly */
+function moveAnomaly(){
+  let anomalies = JSON.parse(localStorage.getItem("anomalies")) || [];
+
+  let a = anomalies.find(a=>a.type==="red");
+  if(a){
+    a.x = x;
+    a.y = y;
+  }
+
+  localStorage.setItem("anomalies", JSON.stringify(anomalies));
+}
+
+/* events */
+function eventMsg(msg){
   localStorage.setItem("message", msg);
-}
-
-/* preset events */
-function eventMsg(text){
-  localStorage.setItem("message", text);
 }
 </script>
 
