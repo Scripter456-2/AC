@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AC CONTROL PANEL</title>
+
+<style>
+body{
+  background:#050505;
+  color:#e6e6e6;
+  font-family:Courier New, monospace;
+  margin:40px;
+}
+
+.container{
+  max-width:800px;
+  margin:auto;
+  background:#111;
+  padding:30px;
+  border:2px solid #333;
+}
+
+h1{ color:#ff2a2a; }
+
+input, select, button{
+  margin:5px;
+  padding:5px;
+  background:#000;
+  color:#fff;
+  border:1px solid #444;
+}
+
+button{
+  cursor:pointer;
+}
+
+.warning{
+  background:#1a0000;
+  border:1px solid red;
+  padding:10px;
+  margin-top:20px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>CONTROL PANEL</h1>
+
+<h2>Move / Add Entity</h2>
+
+<input id="name" placeholder="Name (ANOMALY-001)">
+<input id="x" placeholder="X (0-100)">
+<input id="y" placeholder="Y (0-100)">
+
+<select id="type">
+  <option value="red">Anomaly (Red)</option>
+  <option value="blue">Alpha-91 (Blue)</option>
+</select>
+
+<button onclick="add()">Add / Update</button>
+
+<h2>Send Message</h2>
+<input id="msg" placeholder="Message">
+<button onclick="sendMsg()">Send</button>
+
+<h2>Events</h2>
+
+<button onclick="eventMsg('⚠ CONTAINMENT BREACH DETECTED')">Containment Breach</button>
+<button onclick="eventMsg('☢ REACTOR MELTDOWN INITIATED')">Reactor Meltdown</button>
+<button onclick="eventMsg('🚁 FORCES DEPLOYED')">Send Forces</button>
+
+<div class="warning">
+WARNING: Actions affect live tracking system.
+</div>
+
+</div>
+
+<script>
+let anomalies = JSON.parse(localStorage.getItem("anomalies")) || [];
+
+function save(){
+  localStorage.setItem("anomalies", JSON.stringify(anomalies));
+}
+
+/* add or update */
+function add(){
+  let name = document.getElementById("name").value;
+  let x = parseFloat(document.getElementById("x").value);
+  let y = parseFloat(document.getElementById("y").value);
+  let type = document.getElementById("type").value;
+
+  let existing = anomalies.find(a=>a.name===name);
+
+  if(existing){
+    existing.x = x;
+    existing.y = y;
+    existing.type = type;
+  } else {
+    anomalies.push({name,x,y,type});
+  }
+
+  save();
+}
+
+/* message */
+function sendMsg(){
+  let msg = document.getElementById("msg").value;
+  localStorage.setItem("message", msg);
+}
+
+/* preset events */
+function eventMsg(text){
+  localStorage.setItem("message", text);
+}
+</script>
+
+</body>
+</html>
