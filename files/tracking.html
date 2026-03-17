@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AC TRACKING SYSTEM</title>
+
+<style>
+body{
+  background:#050505;
+  color:#e6e6e6;
+  font-family:Courier New, monospace;
+  margin:0;
+}
+
+h1{
+  color:#ff2a2a;
+  padding:10px;
+}
+
+#map{
+  position:relative;
+  width:100%;
+  height:90vh;
+  background:url("https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg");
+  background-size:cover;
+}
+
+/* dots */
+.dot{
+  position:absolute;
+  width:10px;
+  height:10px;
+  border-radius:50%;
+}
+
+.red{ background:red; }
+.blue{ background:cyan; }
+
+.label{
+  position:absolute;
+  color:white;
+  font-size:10px;
+  transform:translate(12px,-5px);
+}
+
+/* alert box */
+#alert{
+  position:fixed;
+  bottom:10px;
+  left:10px;
+  background:#1a0000;
+  border:1px solid red;
+  padding:10px;
+  display:none;
+}
+</style>
+</head>
+
+<body>
+
+<h1>GLOBAL ANOMALY TRACKING</h1>
+
+<div id="map"></div>
+
+<div id="alert"></div>
+
+<script>
+const map = document.getElementById("map");
+const alertBox = document.getElementById("alert");
+
+/* default anomalies */
+let anomalies = JSON.parse(localStorage.getItem("anomalies")) || [
+  {name:"ANOMALY-001", x:50, y:50, type:"red"},
+  {name:"ALPHA-91", x:60, y:40, type:"blue"}
+];
+
+/* render dots */
+function render(){
+  map.innerHTML = "";
+
+  anomalies.forEach(a=>{
+    let dot = document.createElement("div");
+    dot.className = "dot " + a.type;
+    dot.style.left = a.x + "%";
+    dot.style.top = a.y + "%";
+
+    let label = document.createElement("div");
+    label.className = "label";
+    label.innerText = a.name;
+
+    dot.appendChild(label);
+    map.appendChild(dot);
+  });
+}
+
+/* alerts */
+function showAlert(msg){
+  alertBox.style.display = "block";
+  alertBox.innerText = msg;
+  setTimeout(()=>alertBox.style.display="none",4000);
+}
+
+/* listen for control updates */
+window.addEventListener("storage", ()=>{
+  anomalies = JSON.parse(localStorage.getItem("anomalies")) || anomalies;
+  let msg = localStorage.getItem("message");
+
+  render();
+
+  if(msg){
+    showAlert(msg);
+    localStorage.removeItem("message");
+  }
+});
+
+render();
+</script>
+
+</body>
+</html>
