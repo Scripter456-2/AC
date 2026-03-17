@@ -16,37 +16,22 @@ body{
   max-width:900px;
   margin:auto;
   background:#111;
-  padding:30px;
+  padding:20px;
   border:2px solid #333;
 }
 
 h1{ color:#ff2a2a; }
 
-#map{
-  width:100%;
-  height:300px;
-  background:url("https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/World_map_-_low_resolution.svg/1920px-World_map_-_low_resolution.svg.png");
-  background-size:cover;
-  margin-bottom:20px;
-  cursor:pointer;
-  position:relative;
-}
-
-.marker{
-  position:absolute;
-  width:10px;
-  height:10px;
-  background:yellow;
-  border-radius:50%;
-}
-
-button, input{
+input, select, button{
   margin:5px;
   padding:5px;
   background:#000;
   color:#fff;
   border:1px solid #444;
 }
+
+button{ cursor:pointer; }
+
 </style>
 </head>
 
@@ -56,74 +41,126 @@ button, input{
 
 <h1>CONTROL PANEL</h1>
 
-<h2>Select Location</h2>
-<div id="map"></div>
-<p>X: <span id="x">0</span> | Y: <span id="y">0</span></p>
+<h2>Create Base</h2>
+<input id="baseName" placeholder="SITE-03">
+<button onclick="addBase()">Create</button>
 
-<h2>Deploy Alpha Units</h2>
-<input id="count" placeholder="Unit count">
-<button onclick="deploy()">Send Alpha-91</button>
+<h2>Set Base Status</h2>
+<input id="baseTarget" placeholder="SITE-01">
+<select id="status">
+  <option>STABLE</option>
+  <option>UNDER ATTACK</option>
+  <option>BREACHED</option>
+</select>
+<button onclick="updateBase()">Update</button>
 
-<h2>Move Anomaly</h2>
-<button onclick="moveAnomaly()">Move ANOMALY-001</button>
+<h2>Containment Breach</h2>
+<select id="breachLevel">
+  <option>Minimal Danger</option>
+  <option>Mid Danger</option>
+  <option>Moderate Danger</option>
+  <option>Severe Danger</option>
+  <option>Complete Destruction</option>
+</select>
+<button onclick="breach()">Trigger</button>
 
-<h2>Events</h2>
-<button onclick="eventMsg('⚠ CONTAINMENT BREACH')">Containment Breach</button>
-<button onclick="eventMsg('☢ REACTOR MELTDOWN')">Reactor Meltdown</button>
+<h2>Deploy Units</h2>
+<select id="deployType">
+  <option>Alpha-91</option>
+  <option>Reactor Team</option>
+  <option>Containment Unit</option>
+</select>
+<input id="deploySite" placeholder="SITE-01">
+<button onclick="deploy()">Send</button>
+
+<h2>Custom Message</h2>
+<input id="msg" placeholder="Message">
+<button onclick="sendMsg()">Send</button>
 
 </div>
 
 <script>
-let x=50, y=50;
-const map = document.getElementById("map");
+function getLog(){
+  return JSON.parse(localStorage.getItem("log")) || [];
+}
 
-/* click map */
-map.addEventListener("click", e=>{
-  let rect = map.getBoundingClientRect();
-  x = ((e.clientX - rect.left) / rect.width) * 100;
-  y = ((e.clientY - rect.top) / rect.height) * 100;
+function saveLog(log){
+  localStorage.setItem("log", JSON.stringify(log));
+}
 
-  document.getElementById("x").innerText = x.toFixed(1);
-  document.getElementById("y").innerText = y.toFixed(1);
+/* add base */
+function addBase(){
+  let name = document.getElementById("baseName").value;
 
-  map.innerHTML = `<div class="marker" style="left:${x}%;top:${y}%"></div>`;
-});
+  let bases = JSON.parse(localStorage.getItem("bases")) || [];
+  bases.push({name, status:"STABLE"});
 
-/* deploy alpha */
+  localStorage.setItem("bases", JSON.stringify(bases));
+
+  let log = getLog();
+  log.push("🟢 Base created: " + name);
+  saveLog(log);
+}
+
+/* update base */
+function updateBase(){
+  let name = document.getElementById("baseTarget").value;
+  let status = document.getElementById("status").value;
+
+  let bases = JSON.parse(localStorage.getItem("bases")) || [];
+
+  bases.forEach(b=>{
+    if(b.name === name){
+      b.status = status;
+    }
+  });
+
+  localStorage.setItem("bases", JSON.stringify(bases));
+
+  let log = getLog();
+  log.push("🟡 " + name + " status updated to " + status);
+  saveLog(log);
+}
+
+/* breach */
+function breach(){
+  let level = document.getElementById("breachLevel").value;
+
+  let log = getLog();
+  log.push("🔴 CONTAINMENT BREACH: " + level);
+  saveLog(log);
+}
+
+/* deploy */
 function deploy(){
-  let count = parseInt(document.getElementById("count").value) || 5;
+  let type = document.getElementById("deployType").value;
+  let site = document.getElementById("deploySite").value;
 
-  let anomalies = JSON.parse(localStorage.getItem("anomalies")) || [];
+  let log = getLog();
+  log.push("🚁 " + type + " deployed to " + site);
 
-  let existing = anomalies.find(a=>a.type==="blue");
-
-  if(existing){
-    existing.x = x;
-    existing.y = y;
-    existing.count = count;
-  } else {
-    anomalies.push({name:"ALPHA-91", x, y, type:"blue", count});
+  /* random loss */
+  if(type === "Alpha-91"){
+    if(Math.random() < 0.5){
+      log.push("☠ Alpha-91 units lost during operation");
+    } else {
+      log.push("🔵 Alpha-91 successfully stabilizing anomaly");
+    }
   }
 
-  localStorage.setItem("anomalies", JSON.stringify(anomalies));
-}
-
-/* move anomaly */
-function moveAnomaly(){
-  let anomalies = JSON.parse(localStorage.getItem("anomalies")) || [];
-
-  let a = anomalies.find(a=>a.type==="red");
-  if(a){
-    a.x = x;
-    a.y = y;
+  if(type === "Reactor Team"){
+    log.push("☢ Reactor stabilization in progress at " + site);
   }
 
-  localStorage.setItem("anomalies", JSON.stringify(anomalies));
+  saveLog(log);
 }
 
-/* events */
-function eventMsg(msg){
-  localStorage.setItem("message", msg);
+/* custom msg */
+function sendMsg(){
+  let msg = document.getElementById("msg").value;
+  let log = getLog();
+  log.push("📢 " + msg);
+  saveLog(log);
 }
 </script>
 
