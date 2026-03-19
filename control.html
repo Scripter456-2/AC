@@ -28,6 +28,15 @@ input, select, button{
   color:#fff;
   border:1px solid #444;
 }
+
+button{ cursor:pointer; }
+
+.siteBox{
+  border:1px solid #444;
+  padding:10px;
+  margin:10px 0;
+  background:#0f0f0f;
+}
 </style>
 </head>
 
@@ -37,15 +46,39 @@ input, select, button{
 
 <h1>CONTROL PANEL</h1>
 
+<!-- 🧠 TERMINAL -->
 <h2>Terminal</h2>
 <input id="cmd" placeholder="command...">
 <button onclick="runCmd()">EXECUTE</button>
 
-<h2>Containment Breach</h2>
-<select id="site">
-  <option>SITE-01</option>
-  <option>SITE-02</option>
+<!-- 🏢 SITE MANAGEMENT -->
+<h2>Site Management</h2>
+
+<input id="newSite" placeholder="SITE-03">
+<button onclick="createSite()">Create Site</button>
+
+<input id="deleteSite" placeholder="SITE-03">
+<button onclick="removeSite()">Delete Site</button>
+
+<h3>Existing Sites</h3>
+<div id="siteList"></div>
+
+<!-- ⚠️ STATUS -->
+<h2>Set Site Status</h2>
+<input id="targetSite" placeholder="SITE-01">
+
+<select id="status">
+  <option>STABLE</option>
+  <option>UNDER ATTACK</option>
+  <option>BREACHED</option>
+  <option>UNSTABLE</option>
 </select>
+
+<button onclick="updateSite()">Update</button>
+
+<!-- 🔴 BREACH -->
+<h2>Containment Breach</h2>
+<select id="breachSite"></select>
 
 <select id="level">
   <option>Minimal Danger</option>
@@ -57,6 +90,7 @@ input, select, button{
 
 <button onclick="breach()">Trigger</button>
 
+<!-- 🚁 DEPLOY -->
 <h2>Deploy Teams</h2>
 <select id="team">
   <option>Alpha-91</option>
@@ -64,34 +98,189 @@ input, select, button{
   <option>Guards</option>
 </select>
 
-<input id="site2" placeholder="SITE-01">
+<select id="deploySite"></select>
+
 <button onclick="deploy()">Send</button>
 
+<!-- 🧪 RESEARCH -->
 <h2>Research</h2>
-<input id="researchSite" placeholder="SITE-01">
+<select id="researchSite"></select>
 <button onclick="research()">Start</button>
 
-<h2>🚨 Emergency</h2>
+<!-- 🚨 EMERGENCY -->
+<h2>Emergency Broadcast</h2>
 <input id="msg" placeholder="SEEK SHELTER IMMEDIATELY">
 <button onclick="emergency()">SEND</button>
 
 </div>
 
 <script>
+/* STORAGE HELPERS */
+function getBases(){
+  return JSON.parse(localStorage.getItem("bases")) || [
+    {name:"SITE-01", status:"STABLE"},
+    {name:"SITE-02", status:"STABLE"}
+  ];
+}
+
+function saveBases(b){
+  localStorage.setItem("bases", JSON.stringify(b));
+}
+
 function getLog(){
   return JSON.parse(localStorage.getItem("log")) || [];
 }
+
 function saveLog(l){
   localStorage.setItem("log", JSON.stringify(l));
 }
+
 function getTerm(){
   return JSON.parse(localStorage.getItem("terminal")) || [];
 }
+
 function saveTerm(t){
   localStorage.setItem("terminal", JSON.stringify(t));
 }
 
-/* TERMINAL */
+/* 🏢 RENDER SITES */
+function renderSites(){
+  let bases = getBases();
+
+  let list = document.getElementById("siteList");
+  let selects = ["breachSite","deploySite","researchSite"];
+
+  list.innerHTML="";
+  selects.forEach(id=>document.getElementById(id).innerHTML="");
+
+  bases.forEach(b=>{
+    let div = document.createElement("div");
+    div.className="siteBox";
+    div.innerHTML = `<b>${b.name}</b> - ${b.status}`;
+    list.appendChild(div);
+
+    selects.forEach(id=>{
+      let opt = document.createElement("option");
+      opt.value = b.name;
+      opt.textContent = b.name;
+      document.getElementById(id).appendChild(opt);
+    });
+  });
+}
+
+/* 🏢 CREATE SITE */
+function createSite(){
+  let name = document.getElementById("newSite").value;
+  if(!name) return;
+
+  let bases = getBases();
+  bases.push({name, status:"STABLE"});
+  saveBases(bases);
+
+  let log = getLog();
+  log.push("🟢 Site created: " + name);
+  saveLog(log);
+
+  renderSites();
+}
+
+/* 🏢 DELETE SITE */
+function removeSite(){
+  let name = document.getElementById("deleteSite").value;
+
+  let bases = getBases().filter(b=>b.name !== name);
+  saveBases(bases);
+
+  let log = getLog();
+  log.push("⚠ Site removed: " + name);
+  saveLog(log);
+
+  renderSites();
+}
+
+/* 🔄 UPDATE STATUS */
+function updateSite(){
+  let name = document.getElementById("targetSite").value;
+  let status = document.getElementById("status").value;
+
+  let bases = getBases();
+
+  bases.forEach(b=>{
+    if(b.name===name) b.status=status;
+  });
+
+  saveBases(bases);
+
+  let log = getLog();
+  log.push("🟡 " + name + " → " + status);
+  saveLog(log);
+
+  renderSites();
+}
+
+/* 🔴 BREACH */
+function breach(){
+  let site = document.getElementById("breachSite").value;
+  let level = document.getElementById("level").value;
+
+  let log = getLog();
+  log.push("🔴 BREACH at "+site+" – "+level);
+  saveLog(log);
+}
+
+/* 🚁 DEPLOY */
+function deploy(){
+  let team = document.getElementById("team").value;
+  let site = document.getElementById("deploySite").value;
+
+  let log = getLog();
+  log.push("🚁 "+team+" sent to "+site);
+
+  if(team==="Guards") log.push("🛡 Guards engaging");
+  if(team==="Tech Team") log.push("🛠 Repairing systems");
+  if(team==="Alpha-91"){
+    if(Math.random()<0.5){
+      log.push("☠ Alpha-91 lost");
+    } else {
+      log.push("🔵 Stabilizing anomaly");
+    }
+  }
+
+  saveLog(log);
+}
+
+/* 🧪 RESEARCH */
+function research(){
+  let site = document.getElementById("researchSite").value;
+  let log = getLog();
+
+  log.push("🧪 Research started at "+site);
+
+  if(Math.random()<0.13){
+    log.push("☠ FAILURE – ANOMALY ESCAPED");
+    log.push("🚨 GUARDS REQUIRED");
+  } else {
+    log.push("✅ SUCCESS");
+  }
+
+  saveLog(log);
+}
+
+/* 🚨 EMERGENCY */
+function emergency(){
+  let msg = document.getElementById("msg").value;
+
+  localStorage.setItem("emergency", JSON.stringify({
+    level:"WORLD DANGER",
+    message:msg
+  }));
+
+  let log = getLog();
+  log.push("🚨 "+msg);
+  saveLog(log);
+}
+
+/* 🧠 TERMINAL */
 function runCmd(){
   let input = document.getElementById("cmd").value;
   let t = getTerm();
@@ -115,60 +304,8 @@ function runCmd(){
   document.getElementById("cmd").value="";
 }
 
-/* BREACH */
-function breach(){
-  let site = document.getElementById("site").value;
-  let level = document.getElementById("level").value;
-
-  let log = getLog();
-  log.push("🔴 BREACH at "+site+" – "+level);
-  saveLog(log);
-}
-
-/* DEPLOY */
-function deploy(){
-  let team = document.getElementById("team").value;
-  let site = document.getElementById("site2").value;
-
-  let log = getLog();
-  log.push("🚁 "+team+" sent to "+site);
-
-  if(team==="Guards") log.push("🛡 Guards engaging hostiles");
-  if(team==="Tech Team") log.push("🛠 Repair in progress");
-
-  saveLog(log);
-}
-
-/* RESEARCH */
-function research(){
-  let site = document.getElementById("researchSite").value;
-  let log = getLog();
-
-  log.push("🧪 Research started at "+site);
-
-  if(Math.random()<0.13){
-    log.push("☠ FAILURE – ANOMALY ESCAPED");
-    log.push("🚨 GUARDS REQUIRED");
-  } else {
-    log.push("✅ SUCCESS");
-  }
-
-  saveLog(log);
-}
-
-/* EMERGENCY */
-function emergency(){
-  let msg = document.getElementById("msg").value;
-
-  localStorage.setItem("emergency", JSON.stringify({
-    level:"WORLD DANGER",
-    message:msg
-  }));
-
-  let log = getLog();
-  log.push("🚨 "+msg);
-  saveLog(log);
-}
+/* INIT */
+renderSites();
 </script>
 
 </body>
