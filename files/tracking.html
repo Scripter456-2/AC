@@ -12,8 +12,6 @@ body{
   margin:20px;
 }
 
-h1{ color:#ff2a2a; }
-
 .container{
   max-width:1000px;
   margin:auto;
@@ -22,33 +20,54 @@ h1{ color:#ff2a2a; }
   border:2px solid #333;
 }
 
-/* bases */
-.base{
+h1{ color:#ff2a2a; }
+
+/* sites */
+.site{
   background:#0f0f0f;
   border:1px solid #444;
   padding:10px;
   margin:10px 0;
 }
 
-/* log */
-#log{
-  margin-top:20px;
+/* status colors */
+.stable{ color:#00ff88; }
+.attack{ color:#ffaa00; }
+.breached{ color:#ff4444; }
+.unstable{ color:#ff00ff; }
+
+/* logs */
+#log, #terminalLog{
   background:#000;
   border:1px solid #333;
   padding:10px;
-  height:300px;
+  height:180px;
   overflow-y:auto;
   font-size:13px;
+  margin-bottom:15px;
 }
 
-.entry{
-  margin-bottom:5px;
+/* emergency */
+#emergency{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  font-size:40px;
+  z-index:9999;
+  animation: flash 0.5s infinite;
 }
 
-.red{ color:#ff2a2a; }
-.blue{ color:#00ffff; }
-.yellow{ color:#ffcc00; }
-
+@keyframes flash{
+  0%{background:#000;color:red;}
+  50%{background:red;color:black;}
+  100%{background:#000;color:red;}
+}
 </style>
 </head>
 
@@ -58,61 +77,121 @@ h1{ color:#ff2a2a; }
 
 <h1>GLOBAL CONTROL FEED</h1>
 
-<h2>BASES</h2>
-<div id="bases"></div>
+<h2>SITES</h2>
+<div id="sites"></div>
 
 <h2>ANNOUNCEMENTS</h2>
 <div id="log"></div>
 
+<h2>TERMINAL (READ ONLY)</h2>
+<div id="terminalLog"></div>
+
 </div>
 
+<div id="emergency"></div>
+
+<audio id="alarm" src="https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3"></audio>
+<audio id="raid" src="https://www.soundjay.com/button/sounds/beep-10.mp3"></audio>
+
 <script>
+let log = JSON.parse(localStorage.getItem("log")) || [];
+let terminal = JSON.parse(localStorage.getItem("terminal")) || [];
 let bases = JSON.parse(localStorage.getItem("bases")) || [
   {name:"SITE-01", status:"STABLE"},
   {name:"SITE-02", status:"STABLE"}
 ];
 
-let log = JSON.parse(localStorage.getItem("log")) || [];
+const logEl = document.getElementById("log");
+const termEl = document.getElementById("terminalLog");
+const sitesEl = document.getElementById("sites");
+const emergency = document.getElementById("emergency");
 
-/* render bases */
-function renderBases(){
-  let el = document.getElementById("bases");
-  el.innerHTML = "";
+/* render */
+function render(){
 
+  /* sites */
+  sitesEl.innerHTML="";
   bases.forEach(b=>{
     let div = document.createElement("div");
-    div.className = "base";
-    div.innerHTML = `<b>${b.name}</b><br>Status: ${b.status}`;
-    el.appendChild(div);
+    div.className="site";
+
+    let statusClass = "stable";
+    if(b.status==="UNDER ATTACK") statusClass="attack";
+    if(b.status==="BREACHED") statusClass="breached";
+    if(b.status==="UNSTABLE") statusClass="unstable";
+
+    div.innerHTML = `
+      <b>${b.name}</b><br>
+      Status: <span class="${statusClass}">${b.status}</span>
+    `;
+
+    sitesEl.appendChild(div);
+  });
+
+  /* logs */
+  logEl.innerHTML="";
+  log.slice(-50).forEach(e=>{
+    let d=document.createElement("div");
+    d.innerText=e;
+    logEl.appendChild(d);
+  });
+
+  /* terminal */
+  termEl.innerHTML="";
+  terminal.slice(-50).forEach(e=>{
+    let d=document.createElement("div");
+    d.innerText=e;
+    termEl.appendChild(d);
   });
 }
 
-/* render log */
-function renderLog(){
-  let el = document.getElementById("log");
-  el.innerHTML = "";
-
-  log.slice(-50).forEach(entry=>{
-    let div = document.createElement("div");
-    div.className = "entry";
-    div.innerHTML = entry;
-    el.appendChild(div);
-  });
-
-  el.scrollTop = el.scrollHeight;
-}
-
-/* listen updates */
+/* sync */
 window.addEventListener("storage", ()=>{
-  bases = JSON.parse(localStorage.getItem("bases")) || bases;
   log = JSON.parse(localStorage.getItem("log")) || log;
+  terminal = JSON.parse(localStorage.getItem("terminal")) || terminal;
+  bases = JSON.parse(localStorage.getItem("bases")) || bases;
 
-  renderBases();
-  renderLog();
+  render();
+
+  let em = localStorage.getItem("emergency");
+  if(em){
+    let data = JSON.parse(em);
+    emergency.style.display="flex";
+    emergency.innerHTML=`⚠ ${data.level} ⚠<br>${data.message}`;
+    document.getElementById("alarm").play();
+
+    setTimeout(()=>{
+      emergency.style.display="none";
+      localStorage.removeItem("emergency");
+    },6000);
+  }
 });
 
-renderBases();
-renderLog();
+/* random failures */
+setInterval(()=>{
+  if(Math.random()<0.2){
+    let log = JSON.parse(localStorage.getItem("log")) || [];
+    log.push("⚠ SYSTEM FAILURE DETECTED – SEND TECH TEAM");
+    localStorage.setItem("log", JSON.stringify(log));
+  }
+},6000);
+
+/* RAID */
+setInterval(()=>{
+  if(Math.random()<0.1){
+    let log = JSON.parse(localStorage.getItem("log")) || [];
+    log.push("🚨 RAID WARNING – HOSTILES DETECTED");
+    localStorage.setItem("log", JSON.stringify(log));
+
+    emergency.style.display="flex";
+    emergency.innerHTML="🚨 RAID WARNING 🚨<br>DEFEND ALL SITES";
+    document.getElementById("raid").play();
+
+    setTimeout(()=>emergency.style.display="none",5000);
+  }
+},12000);
+
+render();
 </script>
 
 </body>
