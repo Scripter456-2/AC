@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ANOMALY CONTROL DATABASE - MFO-1</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:#080808;
+    color:#d0d0d0;
+    font-family:Consolas, monospace;
+    line-height:1.7;
+}
+
+::-webkit-scrollbar{
+    width:10px;
+}
+
+::-webkit-scrollbar-thumb{
+    background:#990000;
+}
+
+header{
+    background:#0d0d0d;
+    border-bottom:3px solid #a00000;
+    padding:20px;
+}
+
+.logo{
+    color:#cc0000;
+    font-size:34px;
+    font-weight:bold;
+    letter-spacing:3px;
+}
+
+.subtitle{
+    color:#777;
+}
+
+.warning{
+    margin:20px;
+    border:2px solid #990000;
+    background:#1b0000;
+    padding:15px;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+    padding:20px;
+}
+
+.file-box{
+    border:1px solid #333;
+    background:#101010;
+    padding:20px;
+}
+
+.section{
+    margin-top:30px;
+}
+
+.section h2{
+    color:#cc0000;
+    margin-bottom:15px;
+    border-bottom:1px solid #333;
+    padding-bottom:10px;
+}
+
+.section h3{
+    color:#ff5555;
+    margin-top:20px;
+}
+
+.redacted{
+    background:black;
+    color:black;
+    padding:2px 8px;
+    transition:.2s;
+    cursor:pointer;
+}
+
+.redacted:hover{
+    color:red;
+}
+
+ul{
+    margin-left:30px;
+}
+
+.status{
+    display:grid;
+    grid-template-columns:200px auto;
+    gap:10px;
+}
+
+.status div{
+    padding:6px;
+}
+
+.status div:nth-child(odd){
+    color:#ff5555;
+}
+
+details{
+    margin-top:15px;
+    border:1px solid #333;
+    padding:10px;
+    background:#151515;
+}
+
+summary{
+    cursor:pointer;
+    color:#ff4444;
+}
+
+.log{
+    background:black;
+    color:#00ff00;
+    padding:15px;
+    margin-top:10px;
+    overflow:auto;
+}
+
+.footer{
+    margin-top:50px;
+    text-align:center;
+    border-top:1px solid #333;
+    padding:20px;
+    color:#666;
+}
+
+.blink{
+    animation:blink 1s infinite;
+}
+
+@keyframes blink{
+    50%{
+        opacity:0;
+    }
+}
+
+.classified{
+    color:red;
+    font-weight:bold;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">
+ANOMALY CONTROL DATABASE
+</div>
+
+<div class="subtitle">
+Secure Internal Network • Clearance A-7 Required
+</div>
+
+</header>
+
+<div class="warning">
+
+WARNING
+
+Unauthorized access to this file constitutes a Class III
+Security Violation.
+
+All actions are monitored.
+
+Disconnect immediately if you do not possess
+proper clearance.
+
+</div>
+
+<div class="container">
+
+<div class="file-box">
+
+<h1 class="classified">
+MFO-1 : MOBILE FOX ONE
+</h1>
+
+<br>
+
+<div class="status">
+
+<div>Designation</div>
+<div>MFO-1</div>
+
+<div>Codename</div>
+<div>Mobile Fox One</div>
+
+<div>Status</div>
+<div>ACTIVE</div>
+
+<div>Threat Level</div>
+<div>CLASSIFIED</div>
+
+<div>Clearance</div>
+<div>A-7</div>
+
+<div>Department</div>
+<div>Anomaly Control Executive Command</div>
+
+</div>
+
+<div class="section">
+
+<h2>OVERVIEW</h2>
+
+<p>
+Mobile Fox One is an elite anomalous extraction and rescue task force operating directly under Executive Command.
+</p>
+
+<br>
+
+<p>
+Its primary mission is the preservation, recovery,
+and emergency evacuation of designated
+A-Class Masterminds.
+</p>
+
+<br>
+
+<p>
+Unlike containment units, Mobile Fox One is authorized to abandon facilities, anomalies, assets, and infrastructure if such sacrifices are necessary to preserve an A-Class Mastermind.
+</p>
+
+<br>
+
+<p>
+The exact legal basis for this authority remains
+<span class="redacted">EXECUTIVE ORDER FOX-13</span>.
+</p>
+
+</div>
+
+<div class="section">
+
+<h2>HISTORY</h2>
+
+<p>
+
+MFO-1 was formed following Incident-00.
+
+The incident resulted in the death of a high-value
+A-Class Mastermind.
+
+Subsequent analysis concluded that the loss of a single mastermind caused more damage than the destruction of seventeen containment facilities.
+
+</p>
+
+<br>
+
+<p>
+
+The following information remains sealed:
+
+<span class="redacted">CAUSE OF INCIDENT</span>
+
+<span class="redacted">FACILITY LOCATION</span>
+
+<span class="redacted">ENTITY INVOLVED</span>
+
+<span class="redacted">DEATH RECORD</span>
+
+</p>
+
+</div>
+
+<div class="section">
+
+<h2>A-CLASS MASTERMIND CRITERIA</h2>
+
+<ul>
+
+<li>Possesses unique anomalous knowledge.</li>
+
+<li>Cannot be replaced through conventional training.</li>
+
+<li>Direct interaction with Priority-Level entities.</li>
+
+<li>Maintains knowledge considered essential to containment.</li>
+
+<li>Responsible for preventing extinction-level scenarios.</li>
+
+<li>Approved by Executive Council.</li>
+
+</ul>
+
+</div>
+
+<div class="section">
+
+<h2>COMMAND AUTHORITY</h2>
+
+<p>
+
+During active extraction operations MFO-1 outranks:
+
+</p>
+
+<ul>
+
+<li>Facility Directors</li>
+<li>Regional Commanders</li>
+<li>Containment Chiefs</li>
+<li>Internal Security Officers</li>
+<li>Special Operations Personnel</li>
+
+</ul>
+
+<br>
+
+<p>
+
+The only authority capable of overruling Mobile Fox One is:
+
+<span class="redacted">
+EXECUTIVE COUNCIL
+</span>
+
+</p>
+
+</div>
+
+<div class="section">
+
+<h2>EQUIPMENT</h2>
+
+<h3>Adaptive Hazard Armor Mk-IV</h3>
+
+<p>
+Provides protection against kinetic, thermal,
+memetic, cognitohazardous, and low-grade reality distortion threats.
+</p>
+
+<h3>Cognitive Anchor Module</h3>
+
+<p>
+Prevents hostile memory alteration.
+</p>
+
+<h3>Reality Anchor Pack</h3>
+
+<p>
+Emergency reality stabilization device.
+</p>
+
+<h3>Project RED FOX</h3>
+
+<p>
+
+Description:
+
+<span class="redacted">
+CLASSIFIED
+</span>
+
+</p>
+
+</div>
+
+<div class="section">
+
+<h2>KNOWN OPERATIONS</h2>
+
+<details>
+
+<summary>Operation BLACK DEN</summary>
+
+<p>
+
+Objective:
+Recover A-Class Mastermind from hostile territory.
+
+Outcome:
+SUCCESS
+
+Casualties:
+0 Masterminds
+4 Operators
+
+</p>
+
+</details>
+
+<details>
+
+<summary>Operation FALLEN STAR</summary>
+
+<p>
+
+Objective:
+Locate missing mastermind after facility collapse.
+
+Outcome:
+SUCCESS
+
+Notes:
+
+Subject recovered alive beneath anomalous structure.
+
+</p>
+
+</details>
+
+<details>
+
+<summary>Operation HOLLOW SKY</summary>
+
+<p>
+
+Objective:
+Dimensional extraction.
+
+Outcome:
+SUCCESS
+
+Operational Duration:
+14 Minutes
+
+Subjective Duration:
+23 Years
+
+</p>
+
+</details>
+
+</div>
+
+<div class="section">
+
+<h2>INCIDENT LOG MFO-44</h2>
+
+<div class="log">
+
+03:11 - CONTAINMENT BREACH DETECTED<br>
+03:14 - LOCKDOWN INITIATED<br>
+03:18 - MFO-1 DEPLOYED<br>
+03:22 - COMMAND OBJECTION OVERRULED<br>
+03:24 - VISUAL FEED LOST<br>
+03:25 - UNKNOWN ENTITY DETECTED<br>
+03:27 - SIGNAL TERMINATED<br>
+03:31 - SIGNAL RESTORED<br>
+03:31 - MASTERMIND SECURED<br>
+03:34 - FACILITY DESTROYED<br>
+03:34 - EXTRACTION SUCCESSFUL<br>
+
+</div>
+
+</div>
+
+<div class="section">
+
+<h2>PERSONNEL TESTIMONIES</h2>
+
+<p>
+"They don't rescue facilities."
+</p>
+
+<br>
+
+<p>
+"They rescue the people who know how to rebuild them."
+</p>
+
+<br>
+
+<p>
+"If Fox One arrives, something has already gone terribly wrong."
+</p>
+
+<br>
+
+<p>
+"No one tells them what to do."
+</p>
+
+</div>
+
+<div class="section">
+
+<h2>SEALED RECORD</h2>
+
+<p>
+
+The following section requires clearance A-9.
+
+</p>
+
+<br>
+
+<p>
+
+Current A-Class Masterminds:
+
+<span class="redacted">██████████████</span>
+
+</p>
+
+<br>
+
+<p>
+
+Missing Personnel:
+
+<span class="redacted">██████████████</span>
+
+</p>
+
+<br>
+
+<p>
+
+Project FOX Origin:
+
+<span class="redacted">██████████████████████████████████████████</span>
+
+</p>
+
+<br>
+
+<p>
+
+Unknown Contact Event:
+
+<span class="redacted">██████████████████████████████████████████</span>
+
+</p>
+
+</div>
+
+<div class="section">
+
+<h2>FINAL DIRECTIVE</h2>
+
+<p>
+
+Should an A-Class Mastermind become endangered:
+
+</p>
+
+<ul>
+
+<li>Assist Mobile Fox One.</li>
+
+<li>Do not interfere.</li>
+
+<li>Do not question extraction authority.</li>
+
+<li>Evacuate operational zones.</li>
+
+<li>Await further instructions.</li>
+
+</ul>
+
+<br>
+
+<p>
+
+If Mobile Fox One arrives, move aside.
+
+</p>
+
+</div>
+
+<div class="footer">
+
+ANOMALY CONTROL DATABASE v7.4
+
+<br><br>
+
+FILE STATUS:
+ACTIVE
+
+<br>
+
+247 ADDITIONAL PAGES RESTRICTED
+
+<br><br>
+
+<span class="blink">
+ACCESS DENIED ██████████████
+</span>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html>
