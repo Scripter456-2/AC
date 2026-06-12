@@ -1,1 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ACCESS RESTRICTED</title>
 
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+::-webkit-scrollbar{
+    width:10px;
+}
+
+::-webkit-scrollbar-track{
+    background:#080808;
+}
+
+::-webkit-scrollbar-thumb{
+    background:#990000;
+}
+
+::-webkit-scrollbar-thumb:hover{
+    background:#bb0000;
+}
+
+body{
+    background:#080808;
+    color:#d0d0d0;
+    font-family:Consolas, monospace;
+    line-height:1.7;
+}
+
+header{
+    background:#0d0d0d;
+    border-bottom:3px solid #a00000;
+    padding:20px;
+}
+
+.logo{
+    color:#cc0000;
+    font-size:34px;
+    font-weight:bold;
+    letter-spacing:3px;
+}
+
+.subtitle{
+    color:#777;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+    padding:20px;
+}
+
+.warning{
+    margin:20px 0;
+    border:2px solid #990000;
+    background:#1b0000;
+    padding:15px;
+}
+
+.file-box{
+    border:1px solid #333;
+    background:#101010;
+    padding:25px;
+}
+
+.error{
+    color:#cc0000;
+    font-size:42px;
+    font-weight:bold;
+    margin-bottom:20px;
+}
+
+.notice{
+    background:#0d0d0d;
+    border-left:4px solid #990000;
+    padding:20px;
+    margin-top:20px;
+}
+
+.label{
+    color:#888;
+}
+
+.value{
+    color:#ddd;
+}
+
+.redacted{
+    display:inline-block;
+    width:180px;
+    height:1em;
+    background:#000;
+    vertical-align:middle;
+}
+
+ul{
+    margin-left:30px;
+}
+
+.button{
+    display:inline-block;
+    margin-top:25px;
+    padding:12px 20px;
+    border:1px solid #444;
+    color:#ddd;
+    text-decoration:none;
+    transition:.2s;
+}
+
+.button:hover{
+    background:#1b0000;
+    border-color:#990000;
+}
+
+.footer{
+    margin-top:50px;
+    text-align:center;
+    border-top:1px solid #333;
+    padding:20px;
+    color:#666;
+}
+
+.blink{
+    animation:blink 1s infinite;
+}
+
+@keyframes blink{
+    50%{
+        opacity:0;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="logo">ANOMALY CONTROL DATABASE</div>
+<div class="subtitle">Secure Internal Network</div>
+</header>
+
+<div class="container">
+
+<div class="warning">
+WARNING: Unauthorized access attempt logged.
+</div>
+
+<div class="file-box">
+
+<div class="error">ACCESS RESTRICTED</div>
+
+<p>Your clearance level is insufficient to access this archive.</p>
+
+<div class="notice">
+
+<p><span class="label">Status:</span> <span class="value">DENIED</span></p>
+<br>
+
+<p><span class="label">Requested File:</span> <span class="redacted"></span></p>
+<br>
+
+<p><span class="label">Required Clearance:</span> A-8</p>
+<br>
+
+<p><span class="label">Current Clearance:</span> <span class="redacted"></span></p>
+<br>
+
+<p><span class="label">Authorization:</span> DENIED</p>
+
+</div>
+
+<h2 style="margin-top:25px; color:#cc0000;">SECURITY NOTICE</h2>
+
+<ul>
+<li>All access attempts are monitored.</li>
+<li>Repeated failures may trigger internal review.</li>
+<li>Executive clearance required for override.</li>
+</ul>
+
+<a href="index.html" class="button">RETURN TO DATABASE</a>
+
+<div class="footer">
+ACCESS DENIED<br><br>
+<span class="blink">ERROR CODE: ACD-403</span>
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html>
