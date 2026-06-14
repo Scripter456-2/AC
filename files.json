@@ -12,5 +12,12 @@
     "classification": "Keter",
     "status": "████",
     "location": "████████"
+  },
+  {
+    "name": "Mobile Fox Nine",
+    "file": "files/mfo1.html",
+    "classification": "Mobile Fox",
+    "status": "████",
+    "location": "████████"
   }
 ]
