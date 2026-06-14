@@ -7,6 +7,13 @@
     "location": "████████"
   },
   {
+    "name": "ANOMALY-002",
+    "file": "files/redacted2.html",
+    "classification": "Keter",
+    "status": "████",
+    "location": "████████"
+  },
+  {
     "name": "Mobile Fox Nine",
     "file": "files/mfo1.html",
     "classification": "Mobile Fox",
